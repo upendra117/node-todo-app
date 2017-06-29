@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var todosSchema = mongoose.model('todosSchema',{
+var Todo = mongoose.model('Todo_Collection',{
     text: {
         type: String,
         required: true,
@@ -21,5 +21,5 @@ var todosSchema = mongoose.model('todosSchema',{
 });
 
 module.exports = {
-    todosSchema
+    Todo
 };

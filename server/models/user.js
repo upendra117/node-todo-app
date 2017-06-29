@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var usersSchema = mongoose.model('usersSchema',{
+var User = mongoose.model('User_Collection',{
     email: {
         type: String,
         trim: true,
@@ -11,5 +11,5 @@ var usersSchema = mongoose.model('usersSchema',{
 });
 
 module.exports = {
-    usersSchema
+    User
 };
