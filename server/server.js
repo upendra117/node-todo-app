@@ -13,13 +13,13 @@ app.use(bodyParser.json());
 app.post('/todos', (req, res) => {
     // console.log(req.body);
     var todoDocument = new todosSchema({
-        text:req.body.text
+        text: req.body.text
     });
 
     todoDocument.save().then((doc) => {
         res.send(doc);
     }, (err) => {
-        res.send(err);
+        res.status(400).send(err);
     });
 });
 
