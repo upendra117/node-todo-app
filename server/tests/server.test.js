@@ -3,6 +3,7 @@ const request = require('supertest');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
+const {User} = require('./../models/user');
 
 const todos = [{
     text: 'First test todo'
@@ -10,13 +11,20 @@ const todos = [{
     text: 'Second test todo'
 }];
 
+const users = [{
+    email: 'upendra117@gmail.com'
+}, {
+    email: 'upendrareddy.gummitha@gmail.com'
+}]
+
 beforeEach((done) => {
     Todo.remove({}).then(() => {
         Todo.insertMany(todos);
     }).then(() => done());
+    // User.remove({}).then(() => {
+    //     User.insertMany(users);
+    // }).then(() => done());
 });
-
-
 
 
 describe('POST /todos', () => {
