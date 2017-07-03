@@ -14,6 +14,7 @@ var app = express();
 var port  = process.env.PORT;
 app.use(bodyParser.json());
 
+// POST /todos
 app.post('/todos', (req, res) => {
     // console.log(req.body);
     var todoDocument = new Todo({
@@ -27,6 +28,22 @@ app.post('/todos', (req, res) => {
     });
 });
 
+// POST /users
+app.post('/users', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    var user = new User(body);
+
+    user.save().then(() => {
+        // res.send({user});
+        return user.generateAuthToken();
+    }).then((token) => {
+        res.header('x-auth', token).send(user);
+    }).catch((err) => {
+        res.status(400).send(err);
+    });
+});
+
+// GET /todos
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos})
@@ -34,6 +51,16 @@ app.get('/todos', (req, res) => {
         res.status(400).send(err);
     });
 });
+
+// GET /users
+app.get('/users', (req, res) => {
+    User.find().then((users) => {
+        res.send({users})
+    }, (err) => {
+        res.status(400).send(err);
+    });
+});
+
 
 // GET /todos/id
 app.get('/todos/:id', (req, res) => {
@@ -53,6 +80,25 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
+// GET /users/:id
+app.get('/users/:id', (req, res) => {
+    var id = req.params.id;
+    // res.send(req.params);
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    User.findById(id).then((user) => {
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.send({user});
+    }).catch((err) => {
+        res.status(400).send(err);
+    });
+});
+
+// DELETE /todos/:id
 app.delete('/todos/:id', (req, res) => {
     var id = req.params.id;
     if (!ObjectID.isValid(id)) {
@@ -67,7 +113,24 @@ app.delete('/todos/:id', (req, res) => {
     }).catch((err) => {
         res.status(400).send();
     });
-})
+});
+
+// DELETE /users/:id
+app.delete('/users/:id', (req, res) => {
+    var id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Todo.findByIdAndRemove(id).then((user) => {
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.send({user});
+    }).catch((err) => {
+        res.status(400).send();
+    });
+});
 
 app.patch('/todos/:id', (req, res) => {
     var id = req.params.id;
@@ -93,6 +156,8 @@ app.patch('/todos/:id', (req, res) => {
         res.status(400).send();
     });
 })
+
+
 
 app.listen(port, () => {
     console.log(`listening at the port ${port}. \n`);
